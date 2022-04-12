@@ -14,7 +14,11 @@ body {
 
 .register, .login{
   margin-top: 80px;
-  padding-left: 120px;
+  padding-left: 100px;
+}
+
+.social-block{
+  text-align: center;
 }
 
 
