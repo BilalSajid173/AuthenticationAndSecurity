@@ -4,7 +4,8 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const ejs = require("ejs")
 const mongoose = require("mongoose")
-const md5 = require("md5")
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const app = express()
 app.set("view engine", "ejs")
@@ -19,7 +20,7 @@ const userSchema = new mongoose.Schema({
 })
 
 
-const User = mongoose.model("User",userSchema)
+const User = mongoose.model("User", userSchema)
 
 app.get("/", function (req, res) {
     res.render("home");
@@ -33,41 +34,42 @@ app.get("/login", function (req, res) {
     res.render("login");
 })
 
-app.post("/register",function(req,res){
-    const email = req.body.username
-    const password = md5(req.body.password)
+app.post("/register", function (req, res) {
 
-    const newUSer = new User({
-        email: email,
-        password: password
+    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+        const newUSer = new User({
+            email: req.body.username,
+            password: hash
+        })
+
+        newUSer.save(function (err) {
+            if (err) {
+                console.log(err)
+            } else {
+                res.render("secrets")
+            }
+        })
     })
 
-    newUSer.save(function(err){
-        if(err){
-            console.log(err)
-        } else{
-            res.render("secrets")
-        }
-    })
+
 })
 
 
-app.post("/login",function(req,res){
+app.post("/login", function (req, res) {
     const email = req.body.username
-    const password = md5(req.body.password)
+    const password = req.body.password
 
-    User.findOne({email:email},function(err,foundUser){
-        if(foundUser){
-            if(foundUser.password === password)
-            res.render("secrets")
-        } else{
+    User.findOne({ email: email }, function (err, foundUser) {
+        if (foundUser) {
+            bcrypt.compare(password, foundUser.password, function (err, result) {
+                if (result === true)
+                    res.render("secrets")
+            })
+        } else {
             console.log(err)
         }
     })
 })
-
-
-
 
 
 app.listen(3000, function (err) {
