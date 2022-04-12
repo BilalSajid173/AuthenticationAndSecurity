@@ -1,0 +1,27 @@
+
+body {
+  background-color: #E8ECEF;
+}
+
+.centered {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.register, .login{
+  margin-top: 80px;
+  padding-left: 120px;
+}
+
+
+
+.secret-text {
+  text-align: center;
+  font-size: 2rem;
+  color: #fff;
+  background-color: #000;
+}
